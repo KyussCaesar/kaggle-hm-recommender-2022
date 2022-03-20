@@ -1,5 +1,3 @@
-I bet there's probably some people that are "leaders", when they buy something it's a predictor of other people buying it.
-
 # BASELINES:
 ## `naiive-zero`: assume no-one buys anything.
 - wait nvm the MAP will just be zero
@@ -8,3 +6,59 @@ I bet there's probably some people that are "leaders", when they buy something i
 - LOCF
 
 ## `naiive-most-popular` assume everyone will just buy the 12 most popular items.
+
+# MODELS
+## LGBM: good for the categorical stuff
+
+# FEATURES
+## time since the last purchase of that customer
+if it has been a very long time since last purchase, assume this customer is not coming back
+
+## variety of shopping of that customer
+idea being that the behaviour of customers who purchase a wide variety of items is different to those who purchase smaller variety
+
+e.g. number of unique categories of items purchased within the last timeframe
+e.g. number of unique items divided by number of unique categories of items purchased within the last timeframe
+
+## number of times customer bought an item in a certain category in the last timeframe
+idea being that if a customer only bought items in one category, assume they would continue to only buy items in that category
+
+## cumulative sum of price for that customer
+presume a non-linearity, the behaviour of users who have spent a lot already will be different to that of those who have spent little
+
+## sales channel
+
+## mean time between purchases for that customer
+
+## seasonality (day of week, time of year)
+
+definitely, e.g. winter v.s. summer
+- although, this is different depending on location!
+- identify approx. location of the customer?
+  - we have this already, zip code
+
+possibly day of week? maybe Saturday big spending day, Tuesday not so much
+
+## how to get cross-features/cross-interactions?
+
+e.g. purchasing behaviour of some customers may influence later purchasing behaviour of other customers
+performance of one product may influence performance of another
+products that are substitutes
+products that are complements
+
+collaborative filtering to find these?
+k-nearest to find these?
+
+## time since last price change of SKU
+## percent difference between current price and last price of SKU
+## time since first recorded purchase of SKU
+## time since last recorded purchase of SKU
+## rolling mean of bucket SKU sales volumes, for the timeframe
+e.g. 7-day buckets -> sum total sales volume -> 4 week timeframe -> average of bucket values
+## rolling mean of bucket SKU category sales volumes, for the timeframe
+e.g. 7-day buckets -> sum total sales volume -> 4 week timeframe -> average of bucket values
+
+# ENSEMBLING
+## one model per SKU: customer data -> probability of this product being purchased by that customer within the next week
+## one model per customer: product data -> probability of this customer purchasing that product within the next week
+## one model per SKU category: customer data -> probability of any product in this category being purchased by that customer within the next week
