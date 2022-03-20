@@ -4,10 +4,18 @@
 #
 #    pip-compile requirements-dev.in
 #
+astroid==2.9.3
+    # via pylint
 asttokens==2.0.5
     # via stack-data
+attrs==21.4.0
+    # via jsonschema
 backcall==0.2.0
     # via ipython
+black==22.1.0
+    # via -r requirements-dev.in
+click==8.0.4
+    # via black
 debugpy==1.5.1
     # via ipykernel
 decorator==5.1.1
@@ -20,26 +28,48 @@ ipykernel==6.9.2
     # via -r requirements-dev.in
 ipython==8.1.1
     # via ipykernel
+isort==5.10.1
+    # via
+    #   -r requirements-dev.in
+    #   pylint
 jedi==0.18.1
     # via ipython
+jsonschema==4.4.0
+    # via nbformat
 jupyter-client==7.1.2
     # via ipykernel
 jupyter-core==4.9.2
-    # via jupyter-client
+    # via
+    #   jupyter-client
+    #   nbformat
+lazy-object-proxy==1.7.1
+    # via astroid
 matplotlib-inline==0.1.3
     # via
     #   ipykernel
     #   ipython
+mccabe==0.6.1
+    # via pylint
+mypy-extensions==0.4.3
+    # via black
+nbformat==5.2.0
+    # via -r requirements-dev.in
 nest-asyncio==1.5.4
     # via
     #   ipykernel
     #   jupyter-client
 parso==0.8.3
     # via jedi
+pathspec==0.9.0
+    # via black
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
+platformdirs==2.5.1
+    # via
+    #   black
+    #   pylint
 prompt-toolkit==3.0.28
     # via ipython
 psutil==5.9.0
@@ -50,14 +80,26 @@ pure-eval==0.2.2
     # via stack-data
 pygments==2.11.2
     # via ipython
+pylint==2.12.2
+    # via -r requirements-dev.in
+pyrsistent==0.18.1
+    # via jsonschema
 python-dateutil==2.8.2
-    # via jupyter-client
+    # via
+    #   -c requirements.txt
+    #   jupyter-client
 pyzmq==22.3.0
     # via jupyter-client
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements.txt
+    #   python-dateutil
 stack-data==0.2.0
     # via ipython
+toml==0.10.2
+    # via pylint
+tomli==2.0.1
+    # via black
 tornado==6.1
     # via
     #   ipykernel
@@ -69,8 +111,11 @@ traitlets==5.1.1
     #   jupyter-client
     #   jupyter-core
     #   matplotlib-inline
+    #   nbformat
 wcwidth==0.2.5
     # via prompt-toolkit
+wrapt==1.13.3
+    # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

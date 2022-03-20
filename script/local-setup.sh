@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+set -x
 
 msg () {
   echo "$*" >&2
@@ -28,11 +29,10 @@ fi
 
 pip install --upgrade pip pip-tools
 
-if [ -f requirements-dev.txt ]
-then
-  # https://github.com/jazzband/pip-tools#workflow-for-layered-requirements
-  pip-sync requirements.txt requirements-dev.txt
-fi
+# https://github.com/jazzband/pip-tools#workflow-for-layered-requirements
+pip-compile
+pip-compile requirements-dev.in
+pip-sync requirements.txt requirements-dev.txt
 
 # https://srinivas1996kumar.medium.com/adding-custom-kernels-to-a-jupyter-notebook-in-visual-studio-53e4d595208c
 python -m ipykernel install --user --name $(basename $(pwd)) --display-name $(basename $(pwd))

@@ -1,2 +1,6 @@
 -c requirements.txt
 ipykernel
+black
+isort
+pylint
+nbformat
