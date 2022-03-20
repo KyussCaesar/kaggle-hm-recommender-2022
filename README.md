@@ -14,6 +14,8 @@ You can also `rm -rf venv` to delete the venv and re-run the script, it will set
 
 Also you should make sure notebook file root is `${workspaceFolder}` in VS Code config.
 
+Also you should make sure to use the Jupyter kernel with the same name as the project.
+
 ## How to add a new dependency (normal)
 
 - Add the package name to `requirements.in`.
@@ -27,6 +29,13 @@ Also you should make sure notebook file root is `${workspaceFolder}` in VS Code 
 - Add `requirements*` to your next commit.
 
 ## Import stuff from other notebooks
+
+`notebooks/__init__.py` sets up the machinery to allow importing stuff from notebooks.
+
+Do `import notebooks` then `from notebooks import <NAME-OF-NOTEBOOK>` then you can access stuff inside the
+notebook with the usual syntax.
+
+Example:
 
 ```python
 import notebooks

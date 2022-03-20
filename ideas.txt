@@ -1,0 +1,10 @@
+I bet there's probably some people that are "leaders", when they buy something it's a predictor of other people buying it.
+
+# BASELINES:
+## `naiive-zero`: assume no-one buys anything.
+- wait nvm the MAP will just be zero
+
+## `naiive-basket` assume everyone will just buy the same as what they bought last time.
+- LOCF
+
+## `naiive-most-popular` assume everyone will just buy the 12 most popular items.
