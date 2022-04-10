@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+container_name_prefix="${PROJECT_NAME}_${SERVICE_NAME}"
+container_id=$(docker ps --filter name="$container_name_prefix" --format {{.ID}})
+if [ -z "$container_id" ]
+then
+  echo >&2 "Error: Cannot find $SERVICE_NAME container ($container_name_prefix)."
+  exit 1
+fi
+
+docker exec -it "$container_id" superset fab create-admin \
+  --username "admin" \
+  --password "admin" \
+  --firstname Superset \
+  --lastname Admin \
+  --email admin@superset.com
+
+docker exec -it "$container_id" superset db upgrade
+docker exec -it "$container_id" superset init
+

@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  grafana:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-grafana
+    hostname: ${SERVICE_NAME}-grafana
+    image: grafana/grafana:latest
+    volumes:
+      - varlibgrafana:/var/lib/grafana
+      - etcgrafana:/etc/grafana
+    ports:
+      - 127.0.0.1:0:3000
+
+volumes:
+  varlibgrafana:
+    name: ${PROJECT_NAME}-${SERVICE_NAME}-varlibgrafana
+  etcgrafana:
+    name: ${PROJECT_NAME}-${SERVICE_NAME}-etcgrafana
+

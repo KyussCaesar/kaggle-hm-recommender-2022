@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+container_name_prefix="${PROJECT_NAME}-${SERVICE_NAME}-postgres"
+container_id=$(docker ps --filter name="$container_name_prefix" --format {{.ID}})
+if [ -z "$container_id" ]
+then
+  echo >&2 "Error: Cannot find $SERVICE_NAME container ($container_name_prefix)."
+  exit 1
+fi
+
+hostname=$(docker inspect "$container_id" --format {{.Config.Hostname}})
+
+echo "postgresql://citus:citus@$hostname:5432/citus"
+

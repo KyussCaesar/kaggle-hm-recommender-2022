@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  rstudio:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-rstudio
+    hostname: ${SERVICE_NAME}-rstudio
+    image: ${PROJECT_NAME}-${SERVICE_NAME}/rstudio:latest
+    build:
+      context: .rp/${SERVICE_NAME}/build
+      args:
+        TZ: ${TIMEZONE}
+    environment:
+      - DISABLE_AUTH=true
+      - PASSWORD=null
+      - ROOT=true
+    volumes:
+      - ./:/home/rstudio
+    ports:
+      - 127.0.0.1:0:8787
+
+volumes:
+  rstudiohome:
+    name: ${PROJECT_NAME}-${SERVICE_NAME}-rstudiohome
+

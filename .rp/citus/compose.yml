@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-postgres
+    hostname: ${SERVICE_NAME}-postgres
+    image: citusdata/citus:10.2
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=citus
+      - POSTGRES_USER=citus
+      - POSTGRES_DB=citus
+
+volumes:
+  pgdata:
+    name: ${PROJECT_NAME}-${SERVICE_NAME}-pgdata
+

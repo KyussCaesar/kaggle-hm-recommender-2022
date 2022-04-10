@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+list-available-services () {
+  find .rp -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort
+}
+
+list-available-scripts-for-service () {
+  local service="$1"
+  shift
+
+  for script in $(find ".rp/$service/script" -type f | sort)
+  do
+    if [ -x "$script" ]
+    then
+      basename "$script"
+    fi
+  done
+}
+
+show-help () {
+  cat >&2 <<EOF
+Usage: rp <service> <action>
+
+Available services:
+$(list-available-services)
+EOF
+}
+
+if [ $# -lt 1 ]
+then
+  show-help
+  exit 1
+fi
+
+service="$1"
+shift
+
+if [ "$service" = help ]
+then
+  show-help
+  exit 1
+fi
+
+if [ "$service" = "show-login-details" ]
+then
+  services=($(list-available-services))
+  divider=no
+  for i in ${!services[@]}
+  do
+    srv="${services[$i]}"
+    if [ -x ".rp/$srv/script/show-login-details" ]
+    then
+      if [ $divider = yes ]
+      then
+        echo ---
+      fi
+
+      echo >&2 "Login details for $srv:"
+      ./rp "$srv" script show-login-details || :
+
+      divider=yes
+    fi
+  done
+  exit 0
+fi
+
+if ! [ -d ".rp/$service" ]
+then
+  echo >&2 "Error: '$service': no such service. Run 'rp help' to view the available services."
+  exit 1
+fi
+
+if [ $# -eq 0 ]
+then
+  echo >&2 "What do you want to do with '$service'? ('rp $service help' may help)."
+  exit 1
+fi
+
+action="$1"
+shift
+
+export PROJECT_NAME=$(basename $(pwd))
+export SERVICE_NAME="$service"
+
+export TIMEZONE="$(timedatectl show --property=Timezone | cut -f2 -d=)"
+
+cmd=(
+  docker-compose
+  --project-name "$PROJECT_NAME"
+  --project-directory "$(pwd)"
+  -f ".rp/$service/compose.yml"
+)
+
+case "$action" in
+  start)
+    "${cmd[@]}" up -d
+    ;;
+  stop)
+    "${cmd[@]}" down
+    ;;
+  build)
+    "${cmd[@]}" build
+    ;;
+  script)
+    if [ $# -eq 0 ]
+    then
+      echo >&2 "Which script do you want? (or invoke 'help' script to list the available scripts)."
+      exit 1
+    fi
+
+    script="$1"
+    shift
+
+    if [ "$script" = help ]
+    then
+      echo >&2 "Available scripts for $service:"
+      list-available-scripts-for-service "$service" >&2
+      exit 1
+    fi
+
+    if ! [ -x ".rp/$service/script/$script" ]
+    then
+      echo >&2 "Error: $script is not executable."
+    fi
+
+    ".rp/$service/script/$script"
+    ;;
+  help)
+    echo >&2 "Sorry, no help yet."
+    ;;
+  *)
+    echo >&2 "Error: '$action': unknown action."
+    ;;
+esac
+

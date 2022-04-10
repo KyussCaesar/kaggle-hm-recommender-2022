@@ -1,0 +1,125 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-postgres
+    hostname: ${SERVICE_NAME}-postgres
+    image: postgres:latest
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=FoolishPassword
+      - POSTGRES_USER=druid
+      - POSTGRES_DB=druid
+
+  # Need 3.5 or later for container nodes
+  zookeeper:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-zookeeper
+    hostname: ${SERVICE_NAME}-zookeeper
+    image: zookeeper:3.5
+    ports:
+      - "127.0.0.1:0:2181"
+    environment:
+      - ZOO_MY_ID=1
+
+  coordinator:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-coordinator
+    hostname: ${SERVICE_NAME}-coordinator
+    image: apache/druid:0.22.0
+    volumes:
+      - druid_shared:/opt/shared
+      - coordinator_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+    ports:
+      - "127.0.0.1:0:8081"
+    command:
+      - coordinator
+    env_file:
+      - .rp/${SERVICE_NAME}/environment
+
+  broker:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-broker
+    hostname: ${SERVICE_NAME}-broker
+    image: apache/druid:0.22.0
+    volumes:
+      - broker_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "127.0.0.1:0:8082"
+    command:
+      - broker
+    env_file:
+      - .rp/${SERVICE_NAME}/environment
+
+  historical:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-historical
+    hostname: ${SERVICE_NAME}-historical
+    image: apache/druid:0.22.0
+    volumes:
+      - druid_shared:/opt/shared
+      - historical_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "127.0.0.1:0:8083"
+    command:
+      - historical
+    env_file:
+      - .rp/${SERVICE_NAME}/environment
+
+  middlemanager:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-middlemanager
+    hostname: ${SERVICE_NAME}-middlemanager
+    image: apache/druid:0.22.0
+    volumes:
+      - druid_shared:/opt/shared
+      - middle_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "127.0.0.1:0:8091"
+      - "127.0.0.1:0:8100"
+      - "127.0.0.1:0:8101"
+      - "127.0.0.1:0:8102"
+      - "127.0.0.1:0:8103"
+      - "127.0.0.1:0:8104"
+      - "127.0.0.1:0:8105"
+    command:
+      - middleManager
+    env_file:
+      - .rp/${SERVICE_NAME}/environment
+
+  router:
+    container_name: ${PROJECT_NAME}-${SERVICE_NAME}-router
+    hostname: ${SERVICE_NAME}-router
+    image: apache/druid:0.22.0
+    volumes:
+      - router_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "127.0.0.1:0:8888"
+    command:
+      - router
+    env_file:
+      - .rp/${SERVICE_NAME}/environment
+
+volumes:
+  metadata_data:
+  middle_var:
+  historical_var:
+  broker_var:
+  coordinator_var:
+  router_var:
+  druid_shared:
