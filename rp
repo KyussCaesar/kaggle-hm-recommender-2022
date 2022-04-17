@@ -83,10 +83,22 @@ shift
 export PROJECT_NAME=$(basename $(pwd))
 export SERVICE_NAME="$service"
 
-export TIMEZONE="$(timedatectl show --property=Timezone | cut -f2 -d=)"
+discover-iana-timezone () {
+  if [ -f /etc/timezone ]
+  then
+    cat /etc/timezone
+  elif command -v timedatectl >/dev/null
+  then
+    timedatectl show --property=Timezone | cut -f2 -d=
+  else
+    echo >&2 'warn: unable to detect timezone.'
+  fi
+}
+
+export TIMEZONE="$(discover-iana-timezone)"
 
 cmd=(
-  docker-compose
+  docker compose
   --project-name "$PROJECT_NAME"
   --project-directory "$(pwd)"
   -f ".rp/$service/compose.yml"
