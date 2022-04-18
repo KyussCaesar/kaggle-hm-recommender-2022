@@ -24,9 +24,14 @@ def find_notebook(fullname, path=None):
         if os.path.isfile(nb_path):
             return nb_path
         # let import Notebook_Name find "Notebook Name.ipynb"
-        nb_path = nb_path.replace("_", " ")
-        if os.path.isfile(nb_path):
-            return nb_path
+        nb_path_2 = nb_path.replace("_", " ")
+        if os.path.isfile(nb_path_2):
+            return nb_path_2
+
+        # let import notebook_name find "notebook-name.ipynb"
+        nb_path_3 = nb_path.replace("_", "-")
+        if os.path.isfile(nb_path_3):
+            return nb_path_3
 
 
 class NotebookLoader(object):
